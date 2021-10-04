@@ -1,0 +1,49 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://final-project-db:5432/gamerepository
+    username: postgres
+    password: ${POSTGRES_PASSWORD:1234}
+    driverClassName: org.postgresql.Driver
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    locations: classpath:db.migration
+    baseline-on-migrate: true
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui-custom.html
+    operationsSorter: method
+
+api:
+  player-service:
+    scheme: http
+    host: player-service
+    port: 8080
+    path: player-service/api/v1/sessions
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: db, env, flyway, mappings, metrics
+
+logging:
+  level:
+    org.zalando.logbook: TRACE
+
+logbook:
+  include: /player-service/api/v1/**
+  exclude:
+    - /actuator/**
+    - /swagger-ui/**
+  write:
+    chunk-size: 1000

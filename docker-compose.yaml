@@ -1,0 +1,45 @@
+version: "3.7"
+services:
+  player-service:
+    image: "player-service-api"
+    build: "playerservice"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  lobby-service:
+    image: "lobby-service-api"
+    build: "lobby"
+    ports:
+      - "8081:8080"
+    depends_on:
+        - db
+  game-repository:
+    image: "game-repository-api"
+    build: "games-repository"
+    ports:
+      - "8082:8080"
+    depends_on:
+      - db
+  db:
+    image: postgres
+    restart: always
+    container_name: final-project-db
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    expose:
+      - 5432
+volumes:
+  db-data:
+secrets:
+  db-password:
+    file: password.txt
+#networks:
+#  back:
+#    name: final_project_network
+#    driver: bridge
